@@ -334,3 +334,4 @@ ASALocalRun/
 .localhistory/
 StartAsCore/constant/SpecConstant.cs
 /releases
+/nuget.exe
