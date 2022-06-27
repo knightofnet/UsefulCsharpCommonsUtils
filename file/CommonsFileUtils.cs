@@ -132,6 +132,10 @@ namespace UsefulCsharpCommonsUtils.file
                 {
                     retDouble = dblSize * Math.Pow(2, 10 * i);
                 }
+                else
+                {
+                    return Double.NaN;
+                }
 
 
 

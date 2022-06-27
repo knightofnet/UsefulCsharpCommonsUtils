@@ -10,9 +10,9 @@ namespace UsefulCsharpCommonsUtils.work.backgroundworker
     public class WorkBackgrounderWithResult<T1, T2>
     {
         readonly BackgroundWorker _innerBg = new BackgroundWorker();
-        private Func<T1, BackgroundWorker, T2> workAction;
-        private Action<T2> finishAction;
-        private Action<Exception> finishWithErrorAction;
+        private Func<T1, BackgroundWorker, T2> _workAction;
+        private Action<T2> _finishAction;
+        private Action<Exception> _finishWithErrorAction;
 
         public bool IsCompleted { get; private set; }
 
@@ -20,47 +20,45 @@ namespace UsefulCsharpCommonsUtils.work.backgroundworker
 
         public WorkBackgrounderWithResult()
         {
-
             _innerBg.DoWork += DoWork;
             _innerBg.RunWorkerCompleted += RunWorkerCompleted;
-
         }
 
         public Func<T1, BackgroundWorker, T2> WorkAction
         {
-            get => workAction;
+            get => _workAction;
             set
             {
                 if (_innerBg.IsBusy)
                 {
                     throw new Exception("Impossible de modifier l'action de travail quand le travail est en cours.");
                 }
-                workAction = value;
+                _workAction = value;
             }
         }
         public Action<T2> FinishAction
         {
-            get => finishAction;
+            get => _finishAction;
             set
             {
                 if (_innerBg.IsBusy)
                 {
                     throw new Exception("Impossible de modifier l'action de fin quand le travail est en cours.");
                 }
-                finishAction = value;
+                _finishAction = value;
             }
         }
 
         public Action<Exception> FinishWithErrorAction
         {
-            get => finishWithErrorAction;
+            get => _finishWithErrorAction;
             set
             {
                 if (_innerBg.IsBusy)
                 {
                     throw new Exception("Impossible de modifier l'action de fin quand le travail est en cours.");
                 }
-                finishWithErrorAction = value;
+                _finishWithErrorAction = value;
             }
         }
 

@@ -61,6 +61,17 @@ namespace UsefulCsharpCommonsUtils.ui.linker
             listBindings.Add(inBinding);
         }
 
+        public void AddBindingCheckbox(CheckBox cbox, string nomProp)
+        {
+            InBindingCheckbox inBinding = new InBindingCheckbox()
+            {
+                Elt = cbox,
+                PropName = nomProp
+            };
+
+            listBindings.Add(inBinding);
+        }
+
         public void AddBindingLabel(Label label, string nomProp)
         {
             InBindingCustom inBindingCustom = new InBindingCustom()
@@ -208,6 +219,60 @@ namespace UsefulCsharpCommonsUtils.ui.linker
             }
         }
 
+        private class InBindingCheckbox : InBinding
+        {
+
+            public InBindingCheckbox()
+            {
+                Type = EnumTypeInBinding.CheckBox;
+            }
+
+            public override string Read(T1 obj)
+            {
+                bool boolValue = false;
+                object rawValue = obj.GetType().GetProperty(PropName)?
+                    .GetValue(obj);
+                if (rawValue is bool boolValueLoc)
+                {
+                    boolValue = boolValueLoc;
+                } else if (rawValue is string stringValueLoc)
+                {
+                    if (!bool.TryParse(stringValueLoc, out boolValue))
+                    {
+                        boolValue = stringValueLoc.ToLower().Trim() == "1" ||
+                                    stringValueLoc.ToLower().Trim() == "true";
+                    }
+                }
+
+                ((CheckBox)Elt).IsChecked = boolValue;
+                return boolValue.ToString();
+            }
+
+            public override string Update(T1 obj)
+            {
+                bool boolValue = ((CheckBox)Elt).IsChecked ?? false;
+                PropertyInfo propInfo = typeof(T1).GetProperty(PropName);
+                if (propInfo == null)
+                {
+                    throw new Exception($"Property {PropName} doesnt exist for type {typeof(T1).Name}.");
+                }
+
+                if (propInfo.PropertyType == typeof(bool))
+                {
+                    obj.GetType().GetProperty(PropName)?.SetValue(obj, boolValue );
+                } else if (propInfo.PropertyType == typeof(string))
+                {
+                    obj.GetType().GetProperty(PropName)?.SetValue(obj, boolValue.ToString());
+                }
+                else if (propInfo.PropertyType == typeof(int) || propInfo.PropertyType == typeof(long) || propInfo.PropertyType == typeof(float) || propInfo.PropertyType == typeof(decimal))
+                {
+                    obj.GetType().GetProperty(PropName)?.SetValue(obj, boolValue ? 1 : 0);
+                }
+
+                return boolValue.ToString();
+            }
+        }
+
         private class InBindingRichTextbox : InBinding
         {
 
@@ -245,8 +310,10 @@ namespace UsefulCsharpCommonsUtils.ui.linker
             FullCustom,
             TextBox,
             Combobox,
-            RichTextBox
+            RichTextBox,
+            CheckBox
         }
+
 
     }
 }
