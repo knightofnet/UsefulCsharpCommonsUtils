@@ -71,6 +71,9 @@
     <Compile Include="lang\ext\CommonsDateUtilsExt.cs" />
     <Compile Include="lang\LangUtils.cs" />
     <Compile Include="lang\CommonsStringUtils.cs" />
+    <Compile Include="misc\ChromeHtmlToPdf.cs" />
+    <Compile Include="misc\CommonsProcessUtils.cs" />
+    <Compile Include="misc\htmltemplate\HtmlBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ui\CommonsUiMisc.cs" />
     <Compile Include="ui\datagrid\AnnotationUtils.cs" />
@@ -107,6 +110,8 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="misc\htmltemplate\sub\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

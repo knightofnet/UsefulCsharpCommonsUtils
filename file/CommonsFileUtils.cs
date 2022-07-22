@@ -14,12 +14,17 @@ namespace UsefulCsharpCommonsUtils.file
 
         private static readonly string[] Sizes = { "o", "ko", "Mo", "Go", "To" };
 
-        public static FileInfo Rename(this FileInfo file, string newName, bool throwExceptionIfFail = true)
+        public static FileInfo Rename(this FileInfo file, string newName, bool isForce = false, bool throwExceptionIfFail = true)
         {
             if (!file.Exists || newName == null) return null;
 
             try
             {
+                string target = Path.Combine(file.Directory.FullName, newName);
+                if (isForce && File.Exists(target))
+                {
+                    File.Delete(target);
+                }
                 FileInfo newfile = file.CopyTo(Path.Combine(file.Directory.FullName, newName));
                 newfile.Attributes = file.Attributes;
                 file.Attributes = FileAttributes.Normal;
