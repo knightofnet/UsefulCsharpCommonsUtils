@@ -108,7 +108,7 @@ namespace UsefulCsharpCommonsUtils.file
             double retDouble = -1;
 
             string sizes = string.Join("|", Sizes);
-            Regex rgx = new Regex(@"(\d.*?(|,\d.*?))\s{0,1}(" + sizes + ")", RegexOptions.IgnoreCase);
+            Regex rgx = new Regex(@"(\d+)(|[,\.]\d*?)\s{0,1}(" + sizes + ")", RegexOptions.IgnoreCase);
             MatchCollection matches = rgx.Matches(hrSize);
             if (matches.Count == 1)
             {
