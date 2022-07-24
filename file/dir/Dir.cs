@@ -10,7 +10,7 @@ namespace UsefulCsharpCommonsUtils.file.dir
 
         //private static readonly NLog.Logger _log_ = NLog.LogManager.GetCurrentClassLogger();
 
-        private DirectoryInfo _innerDir;
+        private readonly DirectoryInfo _innerDir;
 
         public string Fullname => _innerDir?.FullName;
         public string Name => _innerDir?.Name;
@@ -164,6 +164,8 @@ namespace UsefulCsharpCommonsUtils.file.dir
             return Directory.EnumerateFiles(Path.Combine(_innerDir.FullName, child)).Any();
         }
 
+   
+
         public DirectoryInfo DirectoryInfo()
         {
             return _innerDir;
@@ -223,6 +225,7 @@ namespace UsefulCsharpCommonsUtils.file.dir
             Dir d = new Dir(directoryPath);
             return d.Children(isRecurse);
         }
+
 
     }
 }
