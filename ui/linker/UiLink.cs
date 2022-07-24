@@ -72,6 +72,17 @@ namespace UsefulCsharpCommonsUtils.ui.linker
             listBindings.Add(inBinding);
         }
 
+        public void AddBindingPasswordboxNotSecured(PasswordBox tbPassword, string nomProp)
+        {
+            InBindingPasswordboxNotSecured inBinding = new InBindingPasswordboxNotSecured()
+            {
+                Elt = tbPassword,
+                PropName = nomProp
+            };
+
+            listBindings.Add(inBinding);
+        }
+
         public void AddBindingLabel(Label label, string nomProp)
         {
             InBindingCustom inBindingCustom = new InBindingCustom()
@@ -213,9 +224,104 @@ namespace UsefulCsharpCommonsUtils.ui.linker
 
             public override string Update(T1 obj)
             {
-                obj.GetType().GetProperty(PropName)?
-                    .SetValue(obj, ((TextBox)Elt).Text);
+
+
+
+
+                string tboxText = ((TextBox)Elt).Text;
+                PropertyInfo propInfo = typeof(T1).GetProperty(PropName);
+                if (propInfo == null)
+                {
+                    throw new Exception($"Property {PropName} doesnt exist for type {typeof(T1).Name}.");
+                }
+
+                if (propInfo.PropertyType == typeof(bool))
+                {
+
+                    bool boolValue = false;
+                    if (string.IsNullOrWhiteSpace(tboxText)
+                        || "false".Equals(tboxText?.Trim().ToLower())
+                        || "0".Equals(tboxText))
+                    {
+                        boolValue = false;
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrWhiteSpace(tboxText)
+                            && ("true".Equals(tboxText?.Trim().ToLower())
+                                || "1".Equals(tboxText)))
+                        {
+                            boolValue = true;
+                        }
+                        else
+                        {
+                            bool.TryParse(tboxText, out boolValue);
+                        }
+                    }
+
+                    obj.GetType().GetProperty(PropName)?.SetValue(obj, boolValue);
+                }
+                else if (propInfo.PropertyType == typeof(string))
+                {
+                    obj.GetType().GetProperty(PropName)?.SetValue(obj, tboxText);
+                }
+                else if (propInfo.PropertyType == typeof(int) || propInfo.PropertyType == typeof(long) || propInfo.PropertyType == typeof(float) || propInfo.PropertyType == typeof(decimal))
+                {
+
+                    if (int.TryParse(tboxText, out int intValue))
+                    {
+                        obj.GetType().GetProperty(PropName)?.SetValue(obj, intValue);
+                    }
+                    else if (long.TryParse(tboxText, out long longValue))
+                    {
+                        obj.GetType().GetProperty(PropName)?.SetValue(obj, longValue);
+                    }
+                    else if (float.TryParse(tboxText, out float floatValue))
+                    {
+                        obj.GetType().GetProperty(PropName)?.SetValue(obj, floatValue);
+                    }
+                    else if (decimal.TryParse(tboxText, out decimal decValue))
+                    {
+                        obj.GetType().GetProperty(PropName)?.SetValue(obj, decValue);
+                    }
+
+                }
+                else if (propInfo.PropertyType == typeof(DateTime))
+                {
+                    if (DateTime.TryParse(tboxText, out DateTime dtVal))
+                    {
+                        obj.GetType().GetProperty(PropName)?.SetValue(obj, dtVal);
+                    }
+                }
+                else
+                {
+                    obj.GetType().GetProperty(PropName)?.SetValue(obj, tboxText);
+                }
+
                 return ((TextBox)Elt).Text;
+            }
+        }
+
+        private class InBindingPasswordboxNotSecured : InBinding
+        {
+
+            public InBindingPasswordboxNotSecured()
+            {
+                Type = EnumTypeInBinding.PasswordboxNotSecured;
+            }
+
+            public override string Read(T1 obj)
+            {
+                ((PasswordBox)Elt).Password = obj.GetType().GetProperty(PropName)?
+                    .GetValue(obj)?.ToString() ?? string.Empty;
+                return ((PasswordBox)Elt).Password;
+            }
+
+            public override string Update(T1 obj)
+            {
+                obj.GetType().GetProperty(PropName)?
+                    .SetValue(obj, ((PasswordBox)Elt).Password);
+                return ((PasswordBox)Elt).Password;
             }
         }
 
@@ -235,7 +341,8 @@ namespace UsefulCsharpCommonsUtils.ui.linker
                 if (rawValue is bool boolValueLoc)
                 {
                     boolValue = boolValueLoc;
-                } else if (rawValue is string stringValueLoc)
+                }
+                else if (rawValue is string stringValueLoc)
                 {
                     if (!bool.TryParse(stringValueLoc, out boolValue))
                     {
@@ -259,8 +366,9 @@ namespace UsefulCsharpCommonsUtils.ui.linker
 
                 if (propInfo.PropertyType == typeof(bool))
                 {
-                    obj.GetType().GetProperty(PropName)?.SetValue(obj, boolValue );
-                } else if (propInfo.PropertyType == typeof(string))
+                    obj.GetType().GetProperty(PropName)?.SetValue(obj, boolValue);
+                }
+                else if (propInfo.PropertyType == typeof(string))
                 {
                     obj.GetType().GetProperty(PropName)?.SetValue(obj, boolValue.ToString());
                 }
@@ -311,7 +419,8 @@ namespace UsefulCsharpCommonsUtils.ui.linker
             TextBox,
             Combobox,
             RichTextBox,
-            CheckBox
+            CheckBox,
+            PasswordboxNotSecured
         }
 
 
