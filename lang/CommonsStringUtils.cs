@@ -210,6 +210,23 @@ namespace UsefulCsharpCommonsUtils.lang
             return retStr.ToString();
         }
 
+        /// <summary>
+        /// Removes characters in a string from a set of characters (placed in a string).
+        /// </summary>
+        /// <param name="str">The string in which to work</param>
+        /// <param name="charList">the set of characters</param>
+        /// <returns></returns>
+        public static string RemoveChar(string str, string charList)
+        {
+            StringBuilder retStr = new StringBuilder();
+            for (int i = 0; i < str.Length; i++)
+            {
+                char s = str[i];
+                if (!charList.Contains(s))
+                    retStr.Append(s);
+            }
+            return retStr.ToString();
+        }
 
         /// <summary>
         /// Returns a string if not null, or a default text if not.
