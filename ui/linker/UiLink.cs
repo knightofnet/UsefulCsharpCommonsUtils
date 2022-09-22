@@ -83,6 +83,41 @@ namespace UsefulCsharpCommonsUtils.ui.linker
             listBindings.Add(inBinding);
         }
 
+
+        public void AddBindingTextBlock(TextBlock tBlock, string nomProp)
+        {
+            InBindingCustom inBindingCustom = new InBindingCustom()
+            {
+                Elt = tBlock,
+                PropName = nomProp
+
+            };
+
+            inBindingCustom.ReadAction = (obj, l) =>
+            {
+                string locNomProp = nomProp;
+                string text = obj.GetType().GetProperty(locNomProp)?
+                    .GetValue(obj)?.ToString() ?? string.Empty;
+
+                ((TextBlock)l).Text = text;
+
+                return text;
+            };
+
+            inBindingCustom.UpdateAction = (l, obj) =>
+            {
+                string locNomProp = nomProp;
+
+                string text = ((TextBlock)l).Text.ToString();
+                obj.GetType().GetProperty(locNomProp)?
+                    .SetValue(obj, text);
+
+                return text;
+            };
+
+            listBindings.Add(inBindingCustom);
+        }
+
         public void AddBindingLabel(Label label, string nomProp)
         {
             InBindingCustom inBindingCustom = new InBindingCustom()
@@ -325,6 +360,7 @@ namespace UsefulCsharpCommonsUtils.ui.linker
             }
         }
 
+     
         private class InBindingCheckbox : InBinding
         {
 
@@ -420,7 +456,8 @@ namespace UsefulCsharpCommonsUtils.ui.linker
             Combobox,
             RichTextBox,
             CheckBox,
-            PasswordboxNotSecured
+            PasswordboxNotSecured,
+            TextBlock
         }
 
 
