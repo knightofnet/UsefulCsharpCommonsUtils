@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace UsefulCsharpCommonsUtils.work.backgroundworker
 {
-    public class WorkBackgrounderWithResult<T1, T2>
+    public class WorkBackgrounderWithResult<T1, T2> : IGenericWorkBackground
     {
+
         readonly BackgroundWorker _innerBg = new BackgroundWorker();
         private Func<T1, BackgroundWorker, T2> _workAction;
         private Action<T2> _finishAction;
@@ -150,4 +151,6 @@ namespace UsefulCsharpCommonsUtils.work.backgroundworker
             }
         }
     }
+
+
 }

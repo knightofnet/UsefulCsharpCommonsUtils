@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using UsefulCsharpCommonsUtils.collection;
+using UsefulCsharpCommonsUtils.lang;
+using UsefulCsharpCommonsUtils.lang.ext;
+using UsefulCsharpCommonsUtils.ui.usercontrol;
 
 namespace UsefulCsharpCommonsUtils.ui.linker
 {
@@ -34,6 +38,17 @@ namespace UsefulCsharpCommonsUtils.ui.linker
                 ReadAction = readAction,
                 UpdateAction = updateAction,
                 PropName = nomProp,
+            };
+
+            listBindings.Add(inBinding);
+        }
+
+        public void AddBindingKeyValueUc(KeyValueUc keyValueUc, string nomProp, string nomPropLbl)
+        {
+            InBindingKeyValueUc inBinding = new InBindingKeyValueUc(nomPropLbl)
+            {
+                Elt = keyValueUc,
+                PropName = nomProp
             };
 
             listBindings.Add(inBinding);
@@ -130,8 +145,7 @@ namespace UsefulCsharpCommonsUtils.ui.linker
             inBindingCustom.ReadAction = (obj, l) =>
             {
                 string locNomProp = nomProp;
-                string text = obj.GetType().GetProperty(locNomProp)?
-                    .GetValue(obj)?.ToString() ?? string.Empty;
+                string text =  obj.GetType().GetValueOfProp(locNomProp, obj)?.ToString() ?? string.Empty;
 
                 ((Label)l).Content = text;
 
@@ -143,8 +157,7 @@ namespace UsefulCsharpCommonsUtils.ui.linker
                 string locNomProp = nomProp;
 
                 string text = ((Label)l).Content.ToString();
-                obj.GetType().GetProperty(locNomProp)?
-                    .SetValue(obj, text);
+                obj.GetType().SetValueOfProp(locNomProp, obj, text); 
 
                 return text;
             };
@@ -159,7 +172,7 @@ namespace UsefulCsharpCommonsUtils.ui.linker
             {
                 string value = inBinding.Read(Object);
                 string key = $"{inBinding.Elt.Name}";
-                cacheValue.Add(key, value);
+                cacheValue.AddAndReplace(key, value);
             }
         }
 
@@ -260,9 +273,6 @@ namespace UsefulCsharpCommonsUtils.ui.linker
             public override string Update(T1 obj)
             {
 
-
-
-
                 string tboxText = ((TextBox)Elt).Text;
                 PropertyInfo propInfo = typeof(T1).GetProperty(PropName);
                 if (propInfo == null)
@@ -337,6 +347,38 @@ namespace UsefulCsharpCommonsUtils.ui.linker
             }
         }
 
+        private class InBindingKeyValueUc : InBinding
+        {
+            private string Name { get; set; }
+
+            public InBindingKeyValueUc(string lbl)
+            {
+                Type = EnumTypeInBinding.KeyValueUc;
+                Name = lbl;
+            }
+
+            public override string Read(T1 obj)
+            {
+                KeyValueUc locElt = (KeyValueUc)Elt;
+
+                locElt.Value = obj.GetType().GetProperty(PropName)?
+                    .GetValue(obj)?.ToString() ?? string.Empty;
+
+                if (Name != null)
+                {
+                    locElt.Key = Name ?? string.Empty;
+                }
+
+                return ((KeyValueUc)Elt).Value;
+            }
+
+            public override string Update(T1 obj)
+            {
+                KeyValueUc locElt = (KeyValueUc)Elt;
+                return locElt.Value;
+            }
+        }
+
         private class InBindingPasswordboxNotSecured : InBinding
         {
 
@@ -360,7 +402,7 @@ namespace UsefulCsharpCommonsUtils.ui.linker
             }
         }
 
-     
+
         private class InBindingCheckbox : InBinding
         {
 
@@ -457,7 +499,8 @@ namespace UsefulCsharpCommonsUtils.ui.linker
             RichTextBox,
             CheckBox,
             PasswordboxNotSecured,
-            TextBlock
+            TextBlock,
+            KeyValueUc
         }
 
 
