@@ -9,6 +9,9 @@ namespace UsefulCsharpCommonsUtils.lang
     public static class CommonsDateUtils
     {
 
+        private static readonly TimeSpan EpochTicks = new TimeSpan(new DateTime(1970, 1, 1).Ticks);
+
+
         /// <summary>
         /// Returns the last date of month of a date.
         /// </summary>
@@ -99,5 +102,14 @@ namespace UsefulCsharpCommonsUtils.lang
             return dateA.IsBefore(dateB) ? dateB : dateA;
         }
 
+        public static double ToEpochSeconds(DateTime date, bool onlyIntPart=true)
+        {
+            TimeSpan unixTicks = new TimeSpan(date.Ticks) - EpochTicks;
+            if (onlyIntPart)
+            {
+                return (long)unixTicks.TotalSeconds;
+            }
+            return unixTicks.TotalSeconds;
+        }
     }
 }

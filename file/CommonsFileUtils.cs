@@ -50,6 +50,18 @@ namespace UsefulCsharpCommonsUtils.file
             return s + file.Extension;
         }
 
+        public static string SuffixedFileName(string filename, string suffix)
+        {
+            if (string.IsNullOrEmpty(filename)) return suffix;
+            if (string.IsNullOrEmpty(suffix)) return filename;
+
+            string[] splitted = filename.Split('.');
+
+            string s = string.Join(string.Empty, splitted.Take(splitted.Length - 1)) + suffix + splitted.Last();
+            
+            return s ;
+        }
+
 
         public static string GetDesktopPath()
         {

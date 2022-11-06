@@ -58,6 +58,7 @@
     <Compile Include="cli\argsparser\CliParserLangRef.cs" />
     <Compile Include="cli\argsparser\exceptions\CliParsingException.cs" />
     <Compile Include="cli\ConsoleArray.cs" />
+    <Compile Include="cli\NorefMessageBox.cs" />
     <Compile Include="collection\CommonsListExt.cs" />
     <Compile Include="collection\DictionnaryExt.cs" />
     <Compile Include="file\CommonsFileUtils.cs" />
@@ -66,12 +67,15 @@
     <Compile Include="file\FileStreamUtils.cs" />
     <Compile Include="file\Ini.cs" />
     <Compile Include="lang\CommonsNumberUtils.cs" />
+    <Compile Include="lang\CommonsReflection.cs" />
     <Compile Include="lang\ext\CommonsNumberUtils.cs" />
+    <Compile Include="lang\ext\CommonsReflectionExt.cs" />
     <Compile Include="lang\ext\CommonsStringUtilsExt.cs" />
     <Compile Include="lang\CommonsDateUtils.cs" />
     <Compile Include="lang\ext\CommonsDateUtilsExt.cs" />
     <Compile Include="lang\LangUtils.cs" />
     <Compile Include="lang\CommonsStringUtils.cs" />
+    <Compile Include="lang\StringCipher.cs" />
     <Compile Include="misc\ChromeHtmlToPdf.cs" />
     <Compile Include="misc\CommonsProcessUtils.cs" />
     <Compile Include="misc\htmltemplate\HtmlBuilder.cs" />
@@ -88,6 +92,9 @@
     <Compile Include="ui\usercontrol\btnOkCancelUc.xaml.cs">
       <DependentUpon>btnOkCancelUc.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ui\usercontrol\KeyValueUc.xaml.cs">
+      <DependentUpon>KeyValueUc.xaml</DependentUpon>
+    </Compile>
     <Compile Include="uri\UriUtils.cs" />
     <Compile Include="webfunction\jenkins\dto\RunParameter.cs" />
     <Compile Include="webfunction\jenkins\dto\WorkflowRun.cs" />
@@ -96,6 +103,7 @@
     <Compile Include="webfunction\youtrackv4\YoutrackFieldAttribute.cs" />
     <Compile Include="webfunction\youtrackv4\YoutrackObject.cs" />
     <Compile Include="webfunction\youtrackv4\YoutrackV4Rest.cs" />
+    <Compile Include="work\backgroundworker\IGenericWorkBackground.cs" />
     <Compile Include="work\backgroundworker\WorkBackgrounderWithResult.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -107,14 +115,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="ui\usercontrol\KeyValueUc.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="misc\htmltemplate\sub\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="misc\htmltemplate\sub\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
