@@ -351,5 +351,33 @@ namespace UsefulCsharpCommonsUtils.lang
                 return "Un milliard " + RecNumberToText(n % 1000000000);
             return RecNumberToText(n / 1000000000) + "Milliard " + RecNumberToText(n % 1000000000);
         }
+
+        public static string MultipleReplaces(string summary, params string[] args )
+        {
+            
+            if (string.IsNullOrWhiteSpace(summary)) return summary;
+            if (args.Length % 2 != 0)
+            {
+                throw new ArgumentException("Le paramètre args doit avoir un nombre pair d'éléments");
+            }
+
+            string pattern = null;
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    pattern = args[i];
+                }
+                else
+                {
+                    string toReplaceWith = args[i];
+
+                    summary = summary.Replace(pattern, toReplaceWith);
+                }
+
+            }
+
+            return summary;
+        }
     }
 }
