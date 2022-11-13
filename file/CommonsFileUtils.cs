@@ -166,5 +166,17 @@ namespace UsefulCsharpCommonsUtils.file
 
 
 
+        public static bool IsADirectory(string path)
+        {
+            FileAttributes attr = File.GetAttributes(path); ;
+            return (attr & FileAttributes.Directory) == FileAttributes.Directory;
+        }
+
+        public static bool IsAFile(string path)
+        {
+            return !IsADirectory(path);
+        }
+
+
     }
 }

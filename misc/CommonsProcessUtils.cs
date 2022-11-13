@@ -4,13 +4,24 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Management;
 
 namespace UsefulCsharpCommonsUtils.misc
 {
     public static class CommonsProcessUtils
     {
 
+        public static bool ExistsAppInstanceOf(string filepath)
+        {
+            ManagementClass mngmtClass = new ManagementClass("Win32_Process");
+            return mngmtClass.GetInstances().Cast<ManagementBaseObject>().Any(o => o["ExecutablePath"] != null && o["ExecutablePath"].ToString().Equals(filepath));
+        }
 
+        public static int CountAppInstanceOf(string filepath)
+        {
+            ManagementClass mngmtClass = new ManagementClass("Win32_Process");
+            return mngmtClass.GetInstances().Cast<ManagementBaseObject>().Count(o => o["ExecutablePath"] != null && o["ExecutablePath"].ToString().Equals(filepath));
+        }
         public static bool DoCmd(string app, string argsStr = null, string workingDirectory = "")
         {
             //Log.Debug($"DoCmd: {app} {argsStr}");
