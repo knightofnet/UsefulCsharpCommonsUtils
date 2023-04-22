@@ -63,6 +63,58 @@ namespace UsefulCsharpCommonsUtils.webfunction.youtrackv4
             try
             {
                 string raw = HttpGetCommand(new Uri(url), cookieContainer: cookieContainer);
+                XElement xElement = XElement.Parse(raw);
+                string type = xElement.DescendantsAndSelf("projectCustomField").FirstOrDefault()?.Attribute("type")?.Value;
+                if (type != null)
+                {
+                    if (type.StartsWith("ownedField"))
+                    {
+                        string fieldNameBack =
+                            xElement.Descendants("param").FirstOrDefault()?.Attribute("value")?.Value;
+                        if (fieldNameBack != null)
+                        {
+                            fieldNameBack = HttpUtility.UrlEncode(fieldNameBack).Replace("+", "%20");
+                            url = $"{_urlYt}/rest/admin/customfield/ownedFieldBundle/{fieldNameBack}";
+
+                            raw = HttpGetCommand(new Uri(url), cookieContainer: cookieContainer);
+                            xElement = XElement.Parse(raw);
+
+                            if (xElement.DescendantsAndSelf("ownedFieldBundle").Any() && xElement.Descendants("ownedField").Any())
+                            {
+                                retList.AddRange(xElement.Descendants("ownedField").Select(field => field.Value));
+                            }
+                        }
+
+
+                    } else if (type.StartsWith("enum"))
+                    {
+                        string fieldNameBack =
+                            xElement.Descendants("param").FirstOrDefault()?.Attribute("value")?.Value;
+                        if (fieldNameBack != null)
+                        {
+                            fieldNameBack = HttpUtility.UrlEncode(fieldNameBack).Replace("+", "%20");
+                            url = $"{_urlYt}/rest/admin/customfield/bundle/{fieldNameBack}";
+
+                            raw = HttpGetCommand(new Uri(url), cookieContainer: cookieContainer);
+                            xElement = XElement.Parse(raw);
+
+                            if (xElement.DescendantsAndSelf("enumeration").Any() && xElement.Descendants("value").Any())
+                            {
+                                retList.AddRange(xElement.Descendants("value").Select(field => field.Value));
+                            }
+                        }
+                    }
+                    else if (type.StartsWith("version"))
+                    {
+
+                    }
+                    else if (type.StartsWith("user"))
+                    {
+
+                    }
+                }
+
+
                 //XmlFile xmlFile = XmlFile.InitXmlFileByString(raw);
 
 
@@ -74,12 +126,12 @@ namespace UsefulCsharpCommonsUtils.webfunction.youtrackv4
             }
 
 
-            return null;
+            return retList.ToArray();
         }
 
         public List<YoutrackObject> GetYoutracks(string filter)
         {
-            string url = $"{_urlYt}/rest/issue?filter={HttpUtility.UrlEncode(filter)}";
+            string url = $"{_urlYt}/rest/issue?max=50&filter={HttpUtility.UrlEncode(filter)}";
             string data = string.Empty;
 
             List<YoutrackObject> list = new List<YoutrackObject>();
@@ -184,7 +236,8 @@ namespace UsefulCsharpCommonsUtils.webfunction.youtrackv4
                 string raw = HttpGetCommand(new Uri(url), cookieContainer: cookieContainer);
                 XElement xElt = XElement.Parse(raw);
 
-                return xElt.Descendants($"/projectCustomFieldRefs/projectCustomField[@name='{fieldName}']") != null;
+                return xElt.Descendants("projectCustomField")
+                    .Count(r => r.Attribute("name").Value.Equals(fieldName)) != 0;
 
                 /*
                 XmlFile xmlFile = XmlFile.InitXmlFileByString(raw);

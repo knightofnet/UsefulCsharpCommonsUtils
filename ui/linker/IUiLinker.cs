@@ -5,7 +5,7 @@
     {
         void LoadsWith(T obj);
 
-        T UpdateObj(T enviro);
+        T UpdateObj(T objDem);
     }
 
 
