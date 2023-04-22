@@ -29,6 +29,11 @@ namespace UsefulCsharpCommonsUtils.ui.inputbox
             ibv.tbox.Text = initialText ?? string.Empty;
 
             ibv.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            ibv.Topmost = true;
+            ibv.Loaded += (sender, args) =>
+            {
+                ibv.Topmost = false;
+            };
 
             if (ibv.ShowDialog() ?? false)
             {

@@ -115,5 +115,10 @@ namespace UsefulCsharpCommonsUtils.lang.ext
                 ts.Milliseconds,
                 dateTime.Kind);
         }
+
+        public static double ToEpochSeconds(this DateTime date, bool onlyIntPart = true)
+        {
+            return CommonsDateUtils.ToEpochSeconds(date, onlyIntPart);
+        }
     }
 }

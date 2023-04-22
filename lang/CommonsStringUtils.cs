@@ -210,6 +210,23 @@ namespace UsefulCsharpCommonsUtils.lang
             return retStr.ToString();
         }
 
+        /// <summary>
+        /// Removes characters in a string from a set of characters (placed in a string).
+        /// </summary>
+        /// <param name="str">The string in which to work</param>
+        /// <param name="charList">the set of characters</param>
+        /// <returns></returns>
+        public static string RemoveChar(string str, string charList)
+        {
+            StringBuilder retStr = new StringBuilder();
+            for (int i = 0; i < str.Length; i++)
+            {
+                char s = str[i];
+                if (!charList.Contains(s))
+                    retStr.Append(s);
+            }
+            return retStr.ToString();
+        }
 
         /// <summary>
         /// Returns a string if not null, or a default text if not.
@@ -350,6 +367,34 @@ namespace UsefulCsharpCommonsUtils.lang
             if (n <= 1999999999)
                 return "Un milliard " + RecNumberToText(n % 1000000000);
             return RecNumberToText(n / 1000000000) + "Milliard " + RecNumberToText(n % 1000000000);
+        }
+
+        public static string MultipleReplaces(string summary, params string[] args )
+        {
+            
+            if (string.IsNullOrWhiteSpace(summary)) return summary;
+            if (args.Length % 2 != 0)
+            {
+                throw new ArgumentException("Le paramètre args doit avoir un nombre pair d'éléments");
+            }
+
+            string pattern = null;
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    pattern = args[i];
+                }
+                else
+                {
+                    string toReplaceWith = args[i];
+
+                    summary = summary.Replace(pattern, toReplaceWith);
+                }
+
+            }
+
+            return summary;
         }
     }
 }

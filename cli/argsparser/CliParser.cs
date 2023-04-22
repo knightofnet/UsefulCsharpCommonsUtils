@@ -153,14 +153,22 @@ namespace UsefulCsharpCommonsUtils.cli.argsparser
         /// <summary>
         /// Show the parser syntax.
         /// </summary>
-        public void ShowSyntax()
+        public void ShowSyntax(string moreOptionsString = null)
         {
             string codeBase = Assembly.GetEntryAssembly().CodeBase;
             string name = Path.GetFileName(codeBase);
 
-            Console.WriteLine(CliParserLangRef.ShowSyntax_SyntaxTpl, name);
-            Console.WriteLine("");
+            string moreMsgOpt = string.Empty;
+            if (moreOptionsString != null)
+            {
+                moreMsgOpt += $" {moreOptionsString}";
+            }
+
+            Console.WriteLine(CliParserLangRef.ShowSyntax_SyntaxTpl + moreMsgOpt, name);
+            Console.WriteLine(string.Empty);
+
             Console.WriteLine(CliParserLangRef.ShowSyntax_OptionsLbl);
+
             foreach (KeyValuePair<string, Option> valuePair in _options)
             {
                 Option opt = valuePair.Value;
@@ -232,9 +240,9 @@ namespace UsefulCsharpCommonsUtils.cli.argsparser
         }
 
 
-     
 
-      
+
+
 
         public int? GetSingleOptionValueInt(Option option, Dictionary<string, Option> dictionary,
             int? returnDefault = null)
@@ -260,7 +268,7 @@ namespace UsefulCsharpCommonsUtils.cli.argsparser
                 return returnDefault;
             }
 
-            string retValueStr = GetSingleOptionValue(option.Name, dictionary, returnDefault.ToString() );
+            string retValueStr = GetSingleOptionValue(option.Name, dictionary, returnDefault.ToString());
             if (int.TryParse(retValueStr, out var retInt))
             {
                 return retInt;
@@ -294,7 +302,7 @@ namespace UsefulCsharpCommonsUtils.cli.argsparser
             bool returnDefault = false)
         {
 
-            string retValueStr = GetSingleOptionValue(option.Name, dictionary,  returnDefault.ToString());
+            string retValueStr = GetSingleOptionValue(option.Name, dictionary, returnDefault.ToString());
             if (bool.TryParse(retValueStr, out var retBool))
             {
                 return retBool;
@@ -344,7 +352,7 @@ namespace UsefulCsharpCommonsUtils.cli.argsparser
 
     }
 
-    
+
     public class Option
     {
         private List<string> _value = new List<string>();

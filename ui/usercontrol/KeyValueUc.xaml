@@ -1,0 +1,15 @@
+﻿<UserControl x:Class="UsefulCsharpCommonsUtils.ui.usercontrol.KeyValueUc"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:UsefulCsharpCommonsUtils.ui.usercontrol"
+             mc:Ignorable="d" 
+             Background="White"
+             Height="auto" Width="auto"
+             >
+    <WrapPanel>
+        <Label x:Name="lblKey" Content="Key" HorizontalAlignment="Left" />
+        <TextBlock x:Name="txtValue" Text="Value" HorizontalAlignment="Left" Padding="5" TextTrimming="CharacterEllipsis"/>
+    </WrapPanel>
+</UserControl>
