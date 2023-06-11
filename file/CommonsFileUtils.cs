@@ -178,5 +178,22 @@ namespace UsefulCsharpCommonsUtils.file
         }
 
 
+        public static void ReplaceInFile(string toSearch, string toReplaceWith, string filePath, Encoding encoding = null)
+        {
+            if (encoding == null)
+            {
+                encoding = Encoding.UTF8; 
+            }
+
+            List<String> nLines = new List<String>();
+            foreach (string line in File.ReadAllLines(filePath, encoding))
+            {
+                string nLine = line.Replace(toSearch, toReplaceWith);
+                nLines.Add(nLine);
+            }
+
+            File.WriteAllLines(filePath, nLines, encoding);
+
+        }
     }
 }
