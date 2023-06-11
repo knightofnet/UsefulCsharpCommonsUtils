@@ -64,5 +64,11 @@ namespace UsefulCsharpCommonsUtils.lang
             lastPropInfo.SetValue(lastObj, val);
         }
 
+
+        public static bool IsNullable(Type type)
+        {
+            return (object)Nullable.GetUnderlyingType(type) != null;
+        }
+
     }
 }

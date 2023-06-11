@@ -270,6 +270,35 @@ namespace UsefulCsharpCommonsUtils.lang
         }
 
         /// <summary>
+        /// Tests if a string contained all others (toSearch)
+        /// </summary>
+        /// <param name="haystack"></param>
+        /// <param name="toSearch"></param>
+        /// <returns></returns>
+        public static bool ContainsMultipleWithAnd(string haystack, string[] toSearch)
+        {
+            if (haystack == null) return false;
+            if (toSearch == null || !toSearch.Any()) return false;
+
+            return toSearch.All(haystack.Contains);
+        }
+
+        /// <summary>
+        /// Tests if a string contained on of the others (toSearch)
+        /// </summary>
+        /// <param name="haystack"></param>
+        /// <param name="toSearch"></param>
+        /// <returns></returns>
+        public static bool ContainsMultipleWithOr(string haystack, string[] toSearch)
+        {
+            if (haystack == null) return false;
+            if (toSearch == null || !toSearch.Any()) return false;
+
+            return toSearch.Any(haystack.Contains);
+        }
+
+
+        /// <summary>
         /// Return a string with random char and with a defined lenght. Charset is customizable.
         /// </summary>
         /// <param name="length">Lenght of the string</param>
