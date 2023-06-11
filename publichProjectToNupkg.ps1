@@ -3,48 +3,74 @@ param (
     [string]$projectPath,
 
     [Parameter(Mandatory = $false, Position = 1)]
-    [string]$localRepoPath = "C:\Users\z017855\source\repos\packageRepo"
+    [string]$localRepoPath = "E:\CSharp\LocalRepo"
   )
 
-# DÃ©finir le chemin vers nuget.exe
-$nugetExec = "C:\D\csharpSources\AryxDevLibrary\nuget.exe";
-$dotnetExec = "C:\Program Files\Microsoft Visual Studio\2022\Professional\Msbuild\Current\Bin\amd64\MSBuild.exe"
+# Définir le chemin vers nuget.exe
+$nugetExec = "E:\CSharp\Projects\nuget.exe";
+$dotnetExec = "C:\Program Files\Microsoft Visual Studio\2022\Community\Msbuild\Current\Bin\MSBuild.exe"
+$t4Transform = "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\TextTransform.exe";
 
-# DÃ©finir le chemin d'accÃ¨s au projet
+# Définir le chemin d'accès au projet
 # $projectPath = "C:\Users\z017855\source\repos\UsefulCsharpCommonsUtils"
 
-# AccÃ©der au rÃ©pertoire du projet
+# Accéder au répertoire du projet
 Set-Location $projectPath
 
+if (Test-Path -Path "Assembly.tt" -PathType Leaf) {
+    write-host "Transformation T4 Assembly...";
+    Start-Process -FilePath $t4Transform  -ArgumentList "-out Assembly.cs Assembly.tt" -NoNewWindow -wait -PassThru;
+    $p = Start-Process -FilePath $dotnetExec -ArgumentList $("$projectPath") -Wait -NoNewWindow -PassThru;
+    if ($p.ExitCode -ne 0) {
+        write-host "ExitCode != 0 : arrêt"
+        return;
+    }
+}
+
+write-host "Compile MSBUILD...";
 $p = Start-Process -FilePath $dotnetExec -ArgumentList $("$projectPath") -Wait -NoNewWindow -PassThru;
 if ($p.ExitCode -ne 0) {
+	write-host "ExitCode != 0 : arrêt"
     return;
 }
 
 # Obtenir le nom du projet et la version de l'assembly
 $projectName = [System.IO.Path]::GetFileNameWithoutExtension((Get-ChildItem "$projectPath\*.csproj").Name)
-$projectVersion = (Get-Item "$projectPath\bin\Debug\$projectName.dll").VersionInfo.FileVersion
+write-host "Nom du projet : $projectName";
 
-# DÃ©finir le chemin d'accÃ¨s au dossier de sortie du package NuGet
+$projectVersion = (Get-Item "$projectPath\bin\Debug\$projectName.dll").VersionInfo.FileVersion
+write-host "Nom du projet : $projectVersion";
+
+# Définir le chemin d'accès au dossier de sortie du package NuGet
 $nupkgOutputPath = $projectPath
 
-# CrÃ©er le dossier de sortie s'il n'existe pas encore
+# Créer le dossier de sortie s'il n'existe pas encore
 if (!(Test-Path $nupkgOutputPath)) {
     New-Item -ItemType Directory -Path $nupkgOutputPath
 }
 
-# GÃ©nÃ©rer le package NuGet Ã  partir du projet
-Start-process -FilePath $nugetExec -ArgumentList $("pack `"$projectPath\$projectName.csproj`" -Version $projectVersion -OutputDirectory $nupkgOutputPath") -Wait -NoNewWindow;
+write-host "Générer le package NuGet à partir du projet...";
+# Générer le package NuGet à partir du projet
+$p = Start-process -FilePath $nugetExec -ArgumentList $("pack `"$projectPath\$projectName.csproj`" -Version $projectVersion -OutputDirectory $nupkgOutputPath") -Wait -NoNewWindow -PassThru;
+if ($p.ExitCode -ne 0) {
+	write-host "ExitCode != 0 : arrêt"
+    return;
+}
 
-# Renommer le fichier nupkg gÃ©nÃ©rÃ© en ajoutant le nom du projet et la version de l'assembly
+# Renommer le fichier nupkg généré en ajoutant le nom du projet et la version de l'assembly
 $nupkgFileName = "$projectName.$projectVersion.nupkg"
 Rename-Item "$nupkgOutputPath\$projectName.$projectVersion.nupkg" $nupkgFileName
 
-# Afficher un message indiquant que le package NuGet a Ã©tÃ© gÃ©nÃ©rÃ©
-Write-Host "Le package NuGet $nupkgFileName a Ã©tÃ© gÃ©nÃ©rÃ© avec succÃ¨s."
+# Afficher un message indiquant que le package NuGet a été généré
+Write-Host "Le package NuGet $nupkgFileName a été généré avec succès."
 
-# Ajouter le package NuGet au rÃ©fÃ©rentiel local
-Start-process -FilePath $nugetExec -ArgumentList $("add $nupkgFileName -Source $localRepoPath") -Wait -NoNewWindow;
+write-host "Ajouter le package NuGet au référentiel local...";
+# Ajouter le package NuGet au référentiel local
+$p = Start-process -FilePath $nugetExec -ArgumentList $("add $nupkgFileName -Source $localRepoPath") -Wait -NoNewWindow -PassThru;
+if ($p.ExitCode -ne 0) {
+	write-host "ExitCode != 0 : arrêt"
+    return;
+}
 
-# Afficher un message indiquant que le package NuGet a Ã©tÃ© publiÃ© dans le rÃ©fÃ©rentiel local
-Write-Host "Le package NuGet $nupkgFileName a Ã©tÃ© publiÃ© dans le rÃ©fÃ©rentiel local avec succÃ¨s."
+# Afficher un message indiquant que le package NuGet a été publié dans le référentiel local
+Write-Host "Le package NuGet $nupkgFileName a été publié dans le référentiel local avec succès."
