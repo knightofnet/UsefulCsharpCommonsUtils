@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>	
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <!--icon>http://wolfaryx.fr/dev.wolfaryx.ico</icon-->
+    <projectUrl>https://github.com/knightofnet/UsefulCsharpCommonsUtils</projectUrl>
+    <description>A CSharp development toolkit</description>
+    <releaseNotes>Divers ajout</releaseNotes>
+    <copyright>Copyright © WolfAryx Informatique 2023</copyright>
+    <tags>StringUtils InputBox ConsoleArray DateUtils NumberUtils WebFunctions</tags>
+	<dependencies>
+		<group targetFramework=".NETFramework4.5.2" />
+		<group targetFramework=".NETFramework4.5.2" >
+			<dependency id="Newtonsoft.Json" version="[13.0.3]" exclude="Build,Analyzers"/>		
+		</group>
+	</dependencies>	
+  </metadata>
+</package>
