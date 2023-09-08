@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -17,10 +18,10 @@ namespace UsefulCsharpCommonsUtils.webfunction.youtrackv4
 
     public class YoutrackV4Rest
     {
-        private string _urlYt;
+        private readonly string _urlYt;
         private Dictionary<string, YoutrackObject> cacheModifYtO = new Dictionary<string, YoutrackObject>();
 
-        private CookieContainer cookieContainer;
+        private readonly CookieContainer cookieContainer;
 
         public YoutrackV4Rest(string urlYt)
         {
@@ -144,18 +145,14 @@ namespace UsefulCsharpCommonsUtils.webfunction.youtrackv4
 
                 foreach (XElement xmlYtIssue in xElement.Descendants("issue"))
                 {
-                    YoutrackObject ytOriginal = new YoutrackObject();
+                   
                     YoutrackObject ytORes = new YoutrackObject();
                    
-                    XmlToYoutrack(xmlYtIssue, ytOriginal);
+                  
                     XmlToYoutrack(xmlYtIssue, ytORes);
+                    ytORes.PropertyUpdated.Clear();
 
-                   string specId = CommonsStringUtils.RandomString(16, ensureUnique: true);
-                    ytOriginal.SpecialId = specId;
-                    ytORes.SpecialId = specId;
 
-                    cacheModifYtO.Add(specId, ytOriginal);
-                   
                     list.Add(ytORes);
                 }
 
@@ -174,29 +171,22 @@ namespace UsefulCsharpCommonsUtils.webfunction.youtrackv4
         public bool UpdateYoutrack(YoutrackObject youtrackObject)
         {
             if (youtrackObject == null) return false;
-            if (!cacheModifYtO.ContainsKey(youtrackObject.SpecialId))
-            {
-                throw new Exception("Yt incorrect");
-            }
+          
+           
 
-            YoutrackObject original = cacheModifYtO[youtrackObject.SpecialId];
-
-            List<string> propsToUpdate = new List<string>();
-
+            List<string> propsToUpdate = youtrackObject.PropertyUpdated;
+            string propYt = null;
             try
             {
-                if (!LangUtils.IsEqWithNull(original.Subsystem, youtrackObject.Subsystem)) propsToUpdate.Add("Subsystem");
-                if (!LangUtils.IsEqWithNull(original.FixVersion, youtrackObject.FixVersion)) propsToUpdate.Add("FixVersion");
-                if (!LangUtils.IsEqWithNull(original.Type, youtrackObject.Type)) propsToUpdate.Add("Type");
-                if (!LangUtils.IsEqWithNull(original.Sheet, youtrackObject.Sheet)) propsToUpdate.Add("Sheet");
-                if (!LangUtils.IsEqWithNull(original.Affectation, youtrackObject.Affectation)) propsToUpdate.Add("Affectation");
-                if (!LangUtils.IsEqWithNull(original.Demandeur, youtrackObject.Demandeur)) propsToUpdate.Add("Demandeur");
-
+                
                 foreach (string propToUpdate in propsToUpdate)
                 {
                     var ytAttr = GetYoutrackFieldAttribute(propToUpdate);
+                    propYt = ytAttr.ElementRef;
                     UpdateField(ytAttr.ElementRef, youtrackObject.Id, (string)youtrackObject.GetType().GetProperty(propToUpdate).GetValue(youtrackObject));
                 }
+
+                youtrackObject.PropertyUpdated.Clear();
             }
             catch (Exception ex)
             {
@@ -208,7 +198,7 @@ namespace UsefulCsharpCommonsUtils.webfunction.youtrackv4
             return true;
         }
 
-        private bool UpdateField(string fieldName, string issueId, string value)
+        public bool UpdateField(string fieldName, string issueId, string value)
         {
             string url = $"{_urlYt}/rest/issue/{issueId}/execute";
             string data = $"command={fieldName}%20{value}";
@@ -220,7 +210,7 @@ namespace UsefulCsharpCommonsUtils.webfunction.youtrackv4
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception($"Exception when updating {fieldName} field.",ex);
                 // return false;
             }
 
@@ -253,6 +243,58 @@ namespace UsefulCsharpCommonsUtils.webfunction.youtrackv4
 
         }
 
+        public YoutrackObject CreateIssue(string project, string summary, string description)
+        {
+
+            string url = $"{_urlYt}/rest/issue";
+
+            var dict = new Dictionary<string, string>
+            {
+                { "project", project },
+                { "summary", summary }
+            };
+
+            if (description != null)
+            {
+                dict["description"] = description;
+            }
+
+            try
+            {
+                string data = new FormUrlEncodedContent(dict).ReadAsStringAsync().Result;
+                string raw = HttpPostCommand(new Uri(url), data , cookieContainer: cookieContainer);
+                XElement xElt = XElement.Parse(raw);
+
+                YoutrackObject yt = new YoutrackObject()
+                {
+                    Id = xElt.Attributes("id").FirstOrDefault()?.Value,
+                    Summary = summary,
+                    Project = project
+                };
+                yt.PropertyUpdated.Clear();
+                
+
+
+                return yt;
+
+
+                /*
+                XmlFile xmlFile = XmlFile.InitXmlFileByString(raw);
+
+                return xmlFile.Root.SelectSingleNode($"/projectCustomFieldRefs/projectCustomField[@name='{fieldName}']") != null;
+                */
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+                //return null;
+            }
+
+            
+           
+         
+        }
+
 
 
         private static void XmlToYoutrack(XElement xmlNode, YoutrackObject ytO)
@@ -261,15 +303,15 @@ namespace UsefulCsharpCommonsUtils.webfunction.youtrackv4
 
 
 
-            ytO.Id = GetXmlYtValue(xmlNode, "Id");
-            ytO.Project = GetXmlYtValue(xmlNode, "Project");
-            ytO.Subsystem = GetXmlYtValue(xmlNode, "Subsystem");//  xmlNode.SelectSingleNode("./field[@name='Subsystem']/value[1]/text()")?.Value;
-            ytO.FixVersion = GetXmlYtValue(xmlNode, "FixVersion"); // xmlNode.SelectSingleNode("./field[@name='Fix versions']/value[1]/text()")?.Value;
-            ytO.Summary = GetXmlYtValue(xmlNode, "Summary"); // xmlNode.SelectSingleNode("./field[@name='summary']/value[1]/text()")?.Value;
-            ytO.Type = GetXmlYtValue(xmlNode, "Type"); // xmlNode.SelectSingleNode("./field[@name='Type']/value[1]/text()")?.Value;
-            ytO.Sheet = GetXmlYtValue(xmlNode, "Sheet"); // xmlNode.SelectSingleNode("./field[@name='Sheet']/value[1]/text()")?.Value;
-            ytO.Affectation = GetXmlYtValue(xmlNode, "Affectation"); // xmlNode.SelectSingleNode("./field[@name='Affectation']/value[1]/text()")?.Value;
-            ytO.Demandeur = GetXmlYtValue(xmlNode, "Demandeur"); // xmlNode.SelectSingleNode("./field[@name='Demandeur']/value[1]/text()")?.Value;
+            ytO.Id = GetXmlYtValue(xmlNode,  nameof(YoutrackObject.Id));
+            ytO.Project = GetXmlYtValue(xmlNode, nameof(YoutrackObject.Project));
+            ytO.Subsystem = GetXmlYtValue(xmlNode, nameof(YoutrackObject.Subsystem));//  xmlNode.SelectSingleNode("./field[@name='Subsystem']/value[1]/text()")?.Value;
+            ytO.FixVersion = GetXmlYtValue(xmlNode, nameof(YoutrackObject.FixVersion)); // xmlNode.SelectSingleNode("./field[@name='Fix versions']/value[1]/text()")?.Value;
+            ytO.Summary = GetXmlYtValue(xmlNode, nameof(YoutrackObject.Summary)); // xmlNode.SelectSingleNode("./field[@name='summary']/value[1]/text()")?.Value;
+            //ytO.TypeYt = GetXmlYtValue(xmlNode, nameof(YoutrackObject.Id)); // xmlNode.SelectSingleNode("./field[@name='Type']/value[1]/text()")?.Value;
+            ytO.Sheet = GetXmlYtValue(xmlNode, nameof(YoutrackObject.Sheet)); // xmlNode.SelectSingleNode("./field[@name='Sheet']/value[1]/text()")?.Value;
+            ytO.Affectation = GetXmlYtValue(xmlNode, nameof(YoutrackObject.Affectation)); // xmlNode.SelectSingleNode("./field[@name='Affectation']/value[1]/text()")?.Value;
+            ytO.Demandeur = GetXmlYtValue(xmlNode, nameof(YoutrackObject.Demandeur)); // xmlNode.SelectSingleNode("./field[@name='Demandeur']/value[1]/text()")?.Value;
 
         }
 

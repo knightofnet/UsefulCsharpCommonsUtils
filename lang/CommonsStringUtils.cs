@@ -20,24 +20,36 @@ namespace UsefulCsharpCommonsUtils.lang
         private static List<string> _listRandomString;
 
 
-        public static string SafeSubstring(string str, int startIndex, int lenght)
+        /// <summary>
+        /// Returns a substring of the specified length from the specified start index of the given string.
+        /// If the string is null or the start index is greater than or equal to the length of the string, null is returned.
+        /// If the specified length extends beyond the end of the string, the substring from the start index to the end of the string is returned.
+        /// </summary>
+        /// <param name="str">The string to extract the substring from.</param>
+        /// <param name="startIndex">The zero-based starting character position of the substring.</param>
+        /// <param name="length">The number of characters in the substring.</param>
+        /// <returns>A substring of the specified length from the specified start index of the given string, or null if the string is null or the start index is greater than or equal to the length of the string.</returns>
+        /// <xml:lang lang="fr">Une sous-chaîne de la longueur spécifiée à partir de l'index de départ spécifié de la chaîne donnée, ou null si la chaîne est nulle ou l'index de départ est supérieur ou égal à la longueur de la chaîne.</xml:lang>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when the specified length is negative.</exception>
+        public static string SafeSubstring(string str, int startIndex, int length)
         {
             if (str == null || startIndex >= str.Length) return null;
 
-            return startIndex + lenght >= str.Length ?
+            return startIndex + length >= str.Length ?
                 str.Substring(startIndex)
-                : str.Substring(startIndex, lenght);
+                : str.Substring(startIndex, length);
         }
 
         /// <summary>
-        /// Cuts a string, and n parts of delimited lengths.
+        /// This method divides a string into substrings of specified length.
         /// </summary>
-        /// <param name="str">input string</param>
-        /// <param name="len">lenght of string to cut</param>
-        /// <returns>Array of strings</returns>
+        /// <param name="str">The string to be divided.</param>
+        /// <param name="len">The length of the substrings.</param>
+        /// <returns>An array of substrings of specified length.</returns>
+        /// <xml:lang lang="fr">Cette méthode divise une chaîne de caractères en sous-chaînes de longueur spécifiée.</xml:lang>
         public static string[] SubstringsByLen(string str, int len)
         {
-            List<String> strRed = new List<string>(1);
+            List<string> strRed = new List<string>(1);
 
             string strTemp = str;
             while (strTemp.Length > len)
@@ -68,14 +80,14 @@ namespace UsefulCsharpCommonsUtils.lang
         /// </summary>
         /// <param name="str">this string</param>
         /// <returns>The string with the first letter upped and lowered the others</returns>
-        public static string FirstUpperOtherLower(String str)
+        public static string FirstUpperOtherLower(string str)
         {
             if (string.IsNullOrWhiteSpace(str))
             {
                 return str;
             }
 
-            String fl = "";
+            string fl = "";
             if (str.Length >= 1)
             {
                 fl = str.Substring(0, 1).ToUpper();
@@ -170,7 +182,7 @@ namespace UsefulCsharpCommonsUtils.lang
         }
 
         /// <summary>
-        /// Remove diacritics acent in a string.
+        /// Remove diacritics accent in a string.
         /// Source : https://stackoverflow.com/questions/249087/how-do-i-remove-diacritics-accents-from-a-string-in-net
         /// </summary>
         /// <param name="text">the string</param>
@@ -235,7 +247,7 @@ namespace UsefulCsharpCommonsUtils.lang
         /// <param name="defaut">default string</param>
         /// <param name="isTestEmpty"></param>
         /// <returns></returns>
-        public static string TextOrDefault(String text, String defaut, bool isTestEmpty = false)
+        public static string TextOrDefault(string text, string defaut, bool isTestEmpty = false)
         {
             if (text == null || (isTestEmpty && IsEmpty(text)))
             {
@@ -270,11 +282,16 @@ namespace UsefulCsharpCommonsUtils.lang
         }
 
         /// <summary>
-        /// Tests if a string contained all others (toSearch)
+        /// Determines whether a string contains all of the specified substrings using the "AND" operator.
         /// </summary>
-        /// <param name="haystack"></param>
-        /// <param name="toSearch"></param>
-        /// <returns></returns>
+        /// <param name="haystack">The string to search.</param>
+        /// <param name="toSearch">An array of substrings to search for.</param>
+        /// <returns>true if the string contains all of the specified substrings; otherwise, false.</returns>
+        /// <remarks>
+        /// This method determines whether the specified string contains all of the specified substrings using the "AND" operator.
+        /// If the haystack string is null, the method returns false.
+        /// If the toSearch array is null or empty, the method returns false.
+        /// </remarks>
         public static bool ContainsMultipleWithAnd(string haystack, string[] toSearch)
         {
             if (haystack == null) return false;
@@ -424,6 +441,41 @@ namespace UsefulCsharpCommonsUtils.lang
             }
 
             return summary;
+        }
+
+        /// <summary>
+        /// Converts a PascalCase string to a snake_case string.
+        /// </summary>
+        /// <param name="input">The PascalCase string to convert.</param>
+        /// <returns>A snake_case string.</returns>
+        /// <remarks>
+        /// This method converts a PascalCase string to a snake_case string by inserting an underscore before each uppercase letter (except the first one) and converting all letters to lowercase.
+        /// If the input string is null or empty, the method returns the input string.
+        /// </remarks>
+        public static string PascalToSnake(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return input;
+            }
+
+            StringBuilder result = new StringBuilder();
+            result.Append(char.ToLower(input[0]));
+
+            for (int i = 1; i < input.Length; i++)
+            {
+                if (char.IsUpper(input[i]))
+                {
+                    result.Append("_");
+                    result.Append(char.ToLower(input[i]));
+                }
+                else
+                {
+                    result.Append(input[i]);
+                }
+            }
+
+            return result.ToString();
         }
     }
 }

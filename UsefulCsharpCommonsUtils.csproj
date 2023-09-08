@@ -61,6 +61,8 @@
     <Compile Include="cli\argsparser\exceptions\CliParsingException.cs" />
     <Compile Include="cli\ConsoleArray.cs" />
     <Compile Include="cli\NorefMessageBox.cs" />
+    <Compile Include="collection\CircularQueue.cs" />
+    <Compile Include="collection\CircularStack.cs" />
     <Compile Include="collection\CommonsListExt.cs" />
     <Compile Include="collection\DictionnaryExt.cs" />
     <Compile Include="file\CommonsFileUtils.cs" />

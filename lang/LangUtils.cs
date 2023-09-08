@@ -13,10 +13,9 @@ namespace UsefulCsharpCommonsUtils.lang
         {
             if (objA == null && objB != null) { return false; }
             if (objA != null && objB == null) { return false; }
+            if (objA == null) { return false; }
 
-            if (!objA.Equals(objB)) { return false; }
-
-            return true;
+            return objA.Equals(objB);
         }
 
     }

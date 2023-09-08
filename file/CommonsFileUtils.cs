@@ -14,7 +14,7 @@ namespace UsefulCsharpCommonsUtils.file
 
         private static readonly string[] Sizes = { "o", "ko", "Mo", "Go", "To" };
 
-        public static FileInfo Rename(this FileInfo file, string newName, bool isForce = false, bool throwExceptionIfFail = true)
+        public static FileInfo Rename(this FileInfo file, string newName, bool isForce = false, bool isByMove = true, bool throwExceptionIfFail = true)
         {
             if (!file.Exists || newName == null) return null;
 
@@ -25,10 +25,20 @@ namespace UsefulCsharpCommonsUtils.file
                 {
                     File.Delete(target);
                 }
-                FileInfo newfile = file.CopyTo(Path.Combine(file.Directory.FullName, newName));
-                newfile.Attributes = file.Attributes;
-                file.Attributes = FileAttributes.Normal;
-                file.Delete();
+
+                FileInfo newfile = null;
+                if (isByMove)
+                {
+                    file.MoveTo(target);
+                    newfile = new FileInfo(target);
+                }
+                else
+                {
+                    newfile = file.CopyTo(target);
+                    newfile.Attributes = file.Attributes;
+                    file.Attributes = FileAttributes.Normal;
+                    file.Delete();
+                }
 
                 return newfile;
             }

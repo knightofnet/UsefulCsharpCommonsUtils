@@ -5,8 +5,7 @@
     <version>$version$</version>
     <title>$title$</title>
     <authors>$author$</authors>	
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <license type="expression">MIT</license>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>   
     <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
     <!--icon>http://wolfaryx.fr/dev.wolfaryx.ico</icon-->
     <projectUrl>https://github.com/knightofnet/UsefulCsharpCommonsUtils</projectUrl>

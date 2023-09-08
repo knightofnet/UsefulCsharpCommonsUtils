@@ -1,15 +1,13 @@
-param (
-    [Parameter(Mandatory = $true, Position = 0)]
-    [string]$projectPath,
 
-    [Parameter(Mandatory = $false, Position = 1)]
-    [string]$localRepoPath = "E:\CSharp\LocalRepo"
-  )
+
+$projectPath = "C:\Users\z017855\source\repos\UsefulCsharpCommonsUtils";
+$localRepoPath = "C:\Users\z017855\source\repos\packageRepo";
 
 # Définir le chemin vers nuget.exe
-$nugetExec = "E:\CSharp\Projects\nuget.exe";
-$dotnetExec = "C:\Program Files\Microsoft Visual Studio\2022\Community\Msbuild\Current\Bin\MSBuild.exe"
-$t4Transform = "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\TextTransform.exe";
+$nugetExec = "C:\D\csharpSources\AryxDevLibrary\nuget.exe";
+$dotnetExec = "C:\Program Files\Microsoft Visual Studio\2022\Professional\Msbuild\Current\Bin\amd64\MSBuild.exe"
+$t4Transform = "C:\Program Files\Microsoft Visual Studio\2022\Professional\Common7\IDE\TextTransform.exe";
+
 
 # Définir le chemin d'accès au projet
 # $projectPath = "C:\Users\z017855\source\repos\UsefulCsharpCommonsUtils"
